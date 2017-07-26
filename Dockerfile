@@ -1,17 +1,20 @@
-FROM node:4.6.0
+FROM node:4.8
 MAINTAINER Pelias
 
 ENV PORT=8080
+ENV DEBIAN_FRONTEND 'noninteractive'
+
 EXPOSE ${PORT}
 
 # install libpostal
-RUN apt-get update
-RUN echo 'APT::Acquire::Retries "20";' >> /etc/apt/apt.conf
-RUN apt-get install -y --no-install-recommends git curl libsnappy-dev autoconf automake libtool pkg-config
+RUN apt-get update &&\
+    echo 'APT::Acquire::Retries "20";' >> /etc/apt/apt.conf &&\
+    apt-get install -y --no-install-recommends git curl libsnappy-dev autoconf automake libtool pkg-config &&\
+    apt-get clean &&\
+    rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /mnt/data/libpostal
-
-RUN git clone https://github.com/openvenues/libpostal \
+RUN mkdir -p /mnt/data/libpostal &&\
+  git clone https://github.com/openvenues/libpostal \
   && cd libpostal \
   && git checkout tags/v0.3.4 \
   && ./bootstrap.sh \
